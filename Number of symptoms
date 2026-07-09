@@ -1,0 +1,10 @@
+for disease_name,disease_dataframe in data_set.groupby('Disease'):
+  symptoms_dataframe = disease_dataframe.drop('Disease',axis=1)
+  symptoms_dataframe = symptoms_dataframe.fillna('None')
+  flat_df = symptoms_dataframe.to_numpy().flatten()
+  unique_df = pd.unique(flat_df)
+  list_df = list(unique_df)
+  list_df.remove('None')
+  length_list = len(list_df)
+  print(f"{disease_name} has {length_list} symptoms")
+  
