@@ -1,0 +1,16 @@
+max_disease = [ ]
+min_disease = [ ]
+for disease_name,disease_dataframe in data_set.groupby('Disease'):
+  symptoms_dataframe = disease_dataframe.drop('Disease',axis=1)
+  symptoms_dataframe = symptoms_dataframe.fillna('None')
+  flat_df = symptoms_dataframe.to_numpy().flatten()
+  unique_df = pd.unique(flat_df)
+  list_df = list(unique_df)
+  list_df.remove('None')
+  length_list = len(list_df)
+  if(length_list > 7):
+     max_disease.append(disease_name)
+  elif(length_list < 7 or length_list == 7):
+     min_disease.append(disease_name)
+print(f"The diseases that have the most number of symptoms are:{max_disease}")
+print(f"The diseases that have the least number of symptoms are : {min_disease}")
