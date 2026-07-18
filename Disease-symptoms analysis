@@ -1,0 +1,185 @@
+import pandas as pd
+data_set = pd.read_csv('/content/DiseaseAndSymptoms.csv')
+print(data_set)
+
+
+#Display all of the column names
+names_columns = data_set.columns
+list_names_columns = list(names_columns)
+print(list_names_columns)
+
+#Display the name of the diseases whether repeated or not
+disease = data_set.Disease
+print(disease)
+
+
+#Access any of the 4920 row disease
+print(disease[1000])
+
+
+
+#Print only the first row of the dataset
+first_row = data_set.iloc[0]
+first_row = first_row.dropna()
+print(first_row)
+
+
+# To access all of the 10 records of the patient with the Fungal infection disease
+fungal_infection_record = data_set.iloc[0:10,0:18]
+print(fungal_infection_record)
+
+
+#Rename Nan into Null instead
+fungal_infection_record = fungal_infection_record.fillna('None')
+print(fungal_infection_record)
+
+
+#How to access the irregularly placed symptoms?
+first_symptom = data_set.Symptom_1[0:10]
+print(first_symptom.value_counts())
+
+#Count the number of each symptom from 1 to 3
+f_i = fungal_infection_record.iloc[0:10,1:5]
+print(f_i)
+
+#To list all of the symptoms of Fungal infection
+two_d_fi = f_i.to_numpy().flatten()
+print(two_d_fi)
+
+
+#Converting the Numpy array into Pandas series
+series_fi = pd.Series(two_d_fi)
+print(series_fi)
+
+
+#Now count
+count_fi = series_fi.value_counts()
+print(count_fi)
+
+
+#Get the symptoms name list
+unique_symp = series_fi.unique()
+print(unique_symp)
+
+length = len(unique_symp)
+position = range(length)
+print(position)
+
+
+#Get the symptom's name
+for name in unique_symp:
+  print(name)
+
+
+#Plot the bar chart: Symp. of FI vs Count of Symp.
+import matplotlib.pyplot as plt
+plt.xlabel('Symptoms of Fungal Infection')
+plt.ylabel('Frequency of the symptoms')
+width = 0.3
+height = count_fi
+plt.bar(position,height,width,color='Blue')
+plt.xticks(position,labels=unique_symp,rotation=45)
+plt.show()
+
+#This is gold.
+for name_of_disease,symptoms in data_set.groupby('Disease'):
+  symptoms = symptoms.fillna('None')
+  np_arr = symptoms.to_numpy().flatten()
+  pd_series = pd.Series(np_arr)
+  unique_symptoms = pd_series.unique()
+  list_symptoms = list(unique_symptoms)
+  list_symptoms.remove('None')
+  list_symptoms.pop(0)
+  print(f"{name_of_disease} : {list_symptoms}")
+
+
+
+#Record of all symptoms
+paralysis_dataframe = data_set.groupby('Disease').get_group('Paralysis (brain hemorrhage)')
+paralysis_dataframe = paralysis_dataframe.iloc[:,1:18]
+np_arr = paralysis_dataframe.values.flatten()
+series = pd.Series(np_arr)
+series = series.dropna()
+print(series)
+
+#Remove none and then make a series.
+
+
+from collections import Counter
+dictionary = Counter(series)
+needed_labels = dictionary.keys()
+list_needed_labels = list(needed_labels)
+needed_count = dictionary.values()
+list_needed_count = list(needed_count)
+
+#Draw the bar plot of the paralysis symptoms count
+length = len(list_needed_labels)
+position = range(length)
+height = list_needed_count
+width = 0.3
+import matplotlib.pyplot as plt
+plt.xlabel('Symptoms of paralysis(brain hemorrhage)')
+plt.ylabel('Count of symptoms')
+plt.bar(position,height,width,color='blue')
+plt.xticks(position,labels=list_needed_labels,rotation = 45)
+plt.show()
+
+import matplotlib.pyplot as plt
+from collections import Counter
+for disease_name,disease_dataframe in data_set.groupby('Disease'):
+  symptoms_dataframe = disease_dataframe.drop('Disease',axis=1)
+  flat_symp_df = symptoms_dataframe.to_numpy().flatten()
+  series_symp_df = pd.Series(flat_symp_df)
+  series_symp_df = series_symp_df.dropna()
+  dictionary = Counter(series_symp_df)
+  #print(dictionary)
+  labels_var = dictionary.keys()
+  labels_list = list(labels_var)
+  labels_length = len(labels_list)
+  position = range(labels_length)
+  count_var = dictionary.values()
+  count_list = list(count_var)
+  height = count_list
+  width = 0.3
+  plt.figure(figsize=(10,5))
+  plt.bar(position,height,width,color='salmon')
+  plt.xticks(position,labels_list,rotation=45)
+  plt.xlabel(f"Symptoms of {disease_name}")
+  plt.ylabel('Count of symptoms')
+  plt.show()
+
+
+
+
+
+
+
+
+for disease_name,disease_dataframe in data_set.groupby('Disease'):
+  symptoms_dataframe = disease_dataframe.drop('Disease',axis=1)
+  symptoms_dataframe = symptoms_dataframe.fillna('None')
+  flat_df = symptoms_dataframe.to_numpy().flatten()
+  unique_df = pd.unique(flat_df)
+  list_df = list(unique_df)
+  list_df.remove('None')
+  length_list = len(list_df)
+  print(f"{disease_name} has {length_list} symptoms")
+
+
+
+max_disease = [ ]
+min_disease = [ ]
+for disease_name,disease_dataframe in data_set.groupby('Disease'):
+  symptoms_dataframe = disease_dataframe.drop('Disease',axis=1)
+  symptoms_dataframe = symptoms_dataframe.fillna('None')
+  flat_df = symptoms_dataframe.to_numpy().flatten()
+  unique_df = pd.unique(flat_df)
+  list_df = list(unique_df)
+  list_df.remove('None')
+  length_list = len(list_df)
+  if(length_list > 7):
+     max_disease.append(disease_name)
+  elif(length_list < 7 or length_list == 7):
+     min_disease.append(disease_name)
+print(f"The diseases that have the most number of symptoms are:{max_disease}")
+print(f"The diseases that have the least number of symptoms are : {min_disease}")
